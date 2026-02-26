@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://89.167.82.184:8080";
+// Proxy through our own Next.js API routes to avoid HTTPS→HTTP mixed content
+const API_BASE = "";
 
 interface SwarmData {
   status: string;
