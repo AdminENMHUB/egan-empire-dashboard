@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useApiPoller } from "@/lib/hooks";
 import { formatUSD, timeAgo } from "@/lib/formatters";
+import { MetricCard } from "@/components/ui";
 
 interface Web3Data {
   available: boolean;
@@ -48,28 +49,6 @@ interface Web3Data {
     total_usdc_received: number;
   };
   transactions: Array<Record<string, unknown>>;
-}
-
-function MetricCard({
-  label,
-  value,
-  subtext,
-  accent,
-}: {
-  label: string;
-  value: React.ReactNode;
-  subtext?: string;
-  accent?: string;
-}) {
-  return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-        {label}
-      </p>
-      <p className={`text-2xl font-bold ${accent || ""}`}>{value}</p>
-      {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
-    </div>
-  );
 }
 
 function StatusBadge({ status }: { status: string }) {

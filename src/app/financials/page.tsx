@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useApiPoller } from "@/lib/hooks";
 import { formatUSD } from "@/lib/formatters";
 import { PnlAreaChart, SwarmCostChart, CostDonutChart } from "@/components/charts";
+import { MetricCard } from "@/components/ui";
 
 interface FinancialsData {
   daily_pnl_history: Record<string, number>;
@@ -48,28 +49,6 @@ interface CostsData {
     alert?: string | null;
   };
   error?: string;
-}
-
-function MetricCard({
-  label,
-  value,
-  subtext,
-  accent,
-}: {
-  label: string;
-  value: React.ReactNode;
-  subtext?: string;
-  accent?: string;
-}) {
-  return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-        {label}
-      </p>
-      <p className={`text-2xl font-bold ${accent || ""}`}>{value}</p>
-      {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
-    </div>
-  );
 }
 
 function PnlText({ value }: { value: number }) {
@@ -175,7 +154,15 @@ export default function FinancialsPage() {
   const totalRevenue30d =
     Object.values(fin.daily_pnl_history).reduce((a, b) => a + b, 0) +
     fin.combined.mrr;
-  const netProfit30d = totalRevenue30d - (todayCost * 30);
+  // Use weekly cost data (prorated to 30d) for a more accurate estimate than single-day extrapolation
+  const weekCost = costs?.week
+    ? Object.values(costs.week).reduce(
+        (sum, d) => sum + ((d as { total_cost?: number }).total_cost ?? 0),
+        0
+      )
+    : 0;
+  const estimatedMonthlyCost = weekCost > 0 ? (weekCost / 7) * 30 : todayCost * 30;
+  const netProfit30d = totalRevenue30d - estimatedMonthlyCost;
 
   return (
     <div className="min-h-screen p-6 max-w-7xl mx-auto">

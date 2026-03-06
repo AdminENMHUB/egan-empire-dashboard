@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { formatUSD, formatPct } from "@/lib/formatters";
 
 // Proxy through our own Next.js API routes to avoid HTTPS→HTTP mixed content
 const API_BASE = "";
@@ -52,15 +53,6 @@ interface StatusResponse {
     live_products: number;
     opportunity_queue: number;
   };
-}
-
-function formatUSD(n: number): string {
-  const sign = n >= 0 ? "" : "-";
-  return `${sign}$${Math.abs(n).toFixed(2)}`;
-}
-
-function formatPct(n: number): string {
-  return `${(n * 100).toFixed(1)}%`;
 }
 
 function StatusBadge({ status }: { status: string }) {
